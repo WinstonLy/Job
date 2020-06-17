@@ -1,0 +1,53 @@
+#include <iostream>
+#include "List.h"
+
+
+using namespace std;
+
+int main(void)
+{
+	Node node1;
+	node1.data.m_strName = "test1";
+	node1.data.m_strPhone = "111111";
+	Node node2;
+	node2.data.m_strName = "test2";
+	node2.data.m_strPhone = "222222";
+
+	Node node3;
+	node3.data.m_strName = "test3";
+	node3.data.m_strPhone = "333333";
+
+	List *pList = new List();
+	cout << "Length " << pList->ListLength() << endl;
+	// cout << node1.data << endl;
+
+	/* pList->ListInsertHead(&node1);
+	pList->ListInsertHead(&node2);
+	pList->ListInsertHead(&node3);
+	pList->ListInsertHead(&node4); */
+	if(pList->ListEmpty())
+	{
+		cout << "is empty" << endl;
+	}
+	pList->ListInsertTail(&node1);
+	pList->ListInsertTail(&node2);
+	
+
+	if(!pList->ListEmpty())
+	{
+		cout << "not empty" << endl;
+	}
+
+	Node temp;
+	cout << "Length  "  << pList->ListLength() << endl;
+
+	pList->ListInsert(1, &node3);
+	pList->ListDelete(2, &temp);
+	cout << "delete" << temp.data.m_strName << temp.data.m_strPhone << endl;
+	pList->ListTraverse();
+	
+	delete pList;
+	pList = NULL;
+
+	return 0;
+}
