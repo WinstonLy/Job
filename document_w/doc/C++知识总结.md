@@ -31,14 +31,17 @@ const int arr[3] = {1, 2, 3};
 **修饰指针变量 * **:
 
 - 如果`const`位于星号 * 的左侧，则`const`用来修饰指针所指向的变量，即指针指向为常量
+
 - 如果`const`位于星号 * 的右侧，`const`就是修饰指针本身，即指针本身是常量
 
-```shell
-int x = 100;
-const int *a1 = &x;  /* int const *a2 = &x; */
-int* const a3 = &x;
-const int* const a = &x;
-```
+  ```cpp
+  int x = 100;
+  const int *a1 = &x;  /* int const *a2 = &x; */
+  int* const a3 = &x;
+  const int* const a = &x;
+  ```
+
+  
 
 **修饰引用变量 &**：`const int &a = x;`
 
@@ -63,7 +66,7 @@ const int* const a = &x;
 
 **使用枚举类型**：
 
-```shell
+```cpp
 class test
 {
 	enum {SIZE1 = 10, SIZE2 = 20};
@@ -74,7 +77,7 @@ class test
 
 - **`cosnt`数据成员的初始化只能在类构造函数的初始化列表中进行。**
 
-```shell
+```cpp
 class A
 {
 	const int SIZE = 10;    /* 错误 */
@@ -88,7 +91,7 @@ A::A(int size):SIZE(size){
 
 **使用 static` const`**
 
-```shell
+```cpp
 class Year
 {
 private:
@@ -108,7 +111,7 @@ int const Year::Inity=1997;//静态变量的赋值方法,注意必须放在类�
 
 对于定义的`const`对象，只能调用`cosnt`修饰的函数，其余函数不能调用
 
-```shell
+```cpp
 class test
 {
 public:
@@ -152,7 +155,7 @@ void main()
 
 `const`引用是指向`const`对象的引用.
 
-```shell
+```cpp
 const int iVal = 1024;
 const int &refVal = iVal;    // ok
 int &ref = iVal; 			 // error
@@ -167,14 +170,14 @@ refVal = 502;				 // error
 
 >**typedef**:定义类型的同义词
 >
->```shell
+>```cpp
 >typedef int wage;
 >wage hour, week;
 >```
 >
->**枚举**:枚举的定义包括关键字`enum`,其后是一个枚举类型名,和一盒花括号括起来,用逗号分开的枚举成员.
+>**枚举**:枚举的定义包括关键字`enum`,其后是一个枚举类型名,和一个花括号括起来,用逗号分开的枚举成员.
 >
->```shell
+>```cpp
 >enum open_modes{input, output, append};
 ># 默认第一个枚举成员赋值为0,后面每个成员依次递增
 >```
@@ -187,7 +190,7 @@ refVal = 502;				 // error
 
 每种容器都定义了自己的迭代器类型,如`vector`:
 
-```shell
+```cpp
 vector<int>::iterator iter;
 ```
 
@@ -195,10 +198,10 @@ vector<int>::iterator iter;
 
   每种容器都定义了一对命名为`begin`和`end`的函数,用于返回迭代器.
 
-  ```shell
-  # begin 返回的迭代器指向第一个元素
+  ```cpp
+  // begin 返回的迭代器指向第一个元素
   vector<int>::iterator iter = ivec.begin();
-  # end 返回的迭代器指向vector的末端元素的下一个位置
+  // end 返回的迭代器指向vector的末端元素的下一个位置
   ```
 
 
@@ -206,13 +209,13 @@ vector<int>::iterator iter;
 
   迭代器可用解引用操作符`*`来访问迭代器所指向的元素
 
-  ```shell
+  ```cpp
   *iter = 0;
   ```
 
   迭代器使用自增操作符向前移动迭代器指向容器中下一个元素
 
-  ```shell
+  ```cpp
   ++iter;
   ```
 
@@ -220,7 +223,7 @@ vector<int>::iterator iter;
 
 - **示例**
 
-  ```shell
+  ```cpp
   # 下标操作
   vector<int> iVec(10);
   for(vector<int>::size_type i = 0; i != iVec.size(); ++i)
@@ -241,25 +244,25 @@ vector<int>::iterator iter;
 
 - **迭代器的基本操作**
 
-  ```shell
-  # 对迭代器对象加上或者减去一个整形值,即在迭代器所指元素之前(加)或之后(减) n 个元素的位置
-  # 仅对 vector 和 deque 支持
+  ```cpp
+  // 对迭代器对象加上或者减去一个整形值,即在迭代器所指元素之前(加)或之后(减) n 个元素的位置
+  // 仅对 vector 和 deque 支持
   iter + n
   iter - n
-  # 计算两个迭代器之间的距离,两个迭代器必须指向同一容器中的元素
+  // 计算两个迭代器之间的距离,两个迭代器必须指向同一容器中的元素
   iter1 - iter2
-  # 返回迭代器iter所指向的元素的引用
+  // 返回迭代器iter所指向的元素的引用
   *iter
-  # 对iter进行解引用,获取指定元素中名为mem的成员
+  // 对iter进行解引用,获取指定元素中名为mem的成员
   iter->mem
   (*iter).mem
-  # 给 iter 加 1,指向容器里的下一个元素
+  // 给 iter 加 1,指向容器里的下一个元素
   ++iter
   iter++
-  # 给 iter 减 1,指向容器里的前一个元素
+  // 给 iter 减 1,指向容器里的前一个元素
   --iter
   iter--
-  # 用`==`或`!=`操作符来比较两个迭代器,如果都指向同一个元素则相等,否则就不等.
+  // 用`==`或`!=`操作符来比较两个迭代器,如果都指向同一个元素则相等,否则就不等.
   iter1 == iter2
   ```
 
@@ -314,7 +317,7 @@ C++的异常处理包括：
 | :--------- | :----------------------------------------------------------- |
 | `const`    | **const**类型的对象在程序执行期间不能被修改改变。            |
 | `volatile` | 修饰符 **volatile** 告诉编译器不需要优化volatile声明的变量，让程序可以直接从内存中读取变量。对于一般的变量编译器会对变量进行优化，将内存中的变量值放在寄存器中以加快读写效率。 |
-| `restrict` | 由 **restrict** 修饰的指针是唯一一种访问它所指向的对象的方式。只有 C99 增加了新的类型限定符 restrict。 |
+| `restrict` | 由 **restrict** 修饰的指针是唯一一种访问它所指向的对象的方式。只有 C99 增加了新的类型限定符 restrict。**主要用来修饰指针指向的内存不能被别的指针引用** |
 
 ### 1.7 C++预处理器
 
@@ -324,7 +327,7 @@ C++的异常处理包括：
 
 **#define预处理**：用于创建符号常量，通常称为**宏**
 
-```shell
+```cpp
 /* 一般指令形式 */
 #define 宏名 待替代内容
 #define PI 3.1415
@@ -335,7 +338,7 @@ C++的异常处理包括：
 
 **条件编译**：有选择地对部分源程序进行编译（`#ifdef、#else、#endif`）
 
-```shell
+```cpp
 #ifdef NULL
 	#define NULL 0
 #endif
@@ -347,7 +350,7 @@ C++的异常处理包括：
 
 - **# 运算符**会把待替代内容转换为用括号引起来的字符串
 
-  ```shell
+  ```cpp
   #define MKSTR( x ) #x
   ......
   cout << MKSTR(HELLO C++) << endl; 		/* 输出字符串 HELLO C++ */
@@ -355,7 +358,7 @@ C++的异常处理包括：
 
 - **## 运算符**用于连接两个令牌，并用来取代宏
 
-  ```shell
+  ```cpp
   #define concat(a, b) a ## b
   ......
   int xy = 100;
@@ -377,11 +380,52 @@ C++的异常处理包括：
 
 **打开文件**：用`open`函数打开文件，`open`函数`fstream、ofstream、ifstream`对象的一个成员
 
-```shell
+```cpp
 /* filename：要打开文件的名称和位置 */
 /* mode：文件被打开的模式 */
 void open(const char *filename, ios::openmode mode);
-# mode 分为 ios::app（追加模式，写入到文件末尾）、ios::ate（文件打开后定位到文件末尾）、ios::in（打开文件用于读取）、ios::out（打开文件用于写入）、ios::trunc（如果文件存在，其内容在打开文件前被截断，即把文件长度设为 0）、
+// mode 分为 ios::app（追加模式，写入到文件末尾）、ios::ate（文件打开后定位到文件末尾）、ios::in（打开文件用于读取）、ios::out（打开文件用于写入）、ios::trunc（如果文件存在，其内容在打开文件前被截断，即把文件长度设为 0）
+
+// 实例
+
+// writing on a text file
+#include <fiostream.h>
+int main () {
+    ofstream out("out.txt");
+    if (out.is_open()) 
+    {
+        out << "This is a line.\n";
+        out << "This is another line.\n";
+        out.close();
+    }
+    return 0;
+}
+ //结果: 在out.txt中写入：
+ This is a line.
+ This is another line 
+   
+// reading a text file
+#include <iostream.h>
+#include <fstream.h>
+#include <stdlib.h>
+
+int main () {
+    char buffer[256];
+    ifstream in("test.txt");
+    if (! in.is_open())
+    { cout << "Error opening file"; exit (1); }
+    while (!in.eof() )
+    {
+         in.getline (buffer,100);
+            cout << buffer << endl;
+    }
+    in.close();
+    return 0;
+}
+//结果 在屏幕上输出
+ This is a line.
+ This is another line
+  
 ```
 
 **关闭文件**：C++程序终止时，会自动关闭刷新所有流，释放所有分配的内存，并关闭所有打开的文件
@@ -400,7 +444,41 @@ void open(const char *filename, ios::openmode mode);
 >
 >它的一个常用功能就是用来清除以回车结束的输入缓冲区的内容，消除上一次输入对下一次输入的影响。
 >
-> 使用 **`getline(cin，str)`**往往可以实现更加简单以及安全的字符串操作
+>使用 **`getline(cin，str)`**往往可以实现更加简单以及安全的字符串操作
+>
+>```cpp
+>#include <iostream>
+>#include <string>
+>
+>using namespace std;
+>
+>int main()
+>{
+>  int ival1 = 0, ival2 = 0;
+>  std::cin >> ival1;
+>  /std::cin.ignore(100, '\n');
+>  std::cin >> ival2;
+>  std::cout << "ival1 = " << ival1 << std::endl;
+>  std::cout << "ival2 = " << ival2 << std::endl;
+>
+>  return 0;
+>}
+>
+>// 加入cin.ignore(100,'\n')的结果
+>winston@Winstonly-Ly:/media/winston/本地磁盘/Job/TestProject/Debug$ ./strace
+>32 23
+>234 534
+>ival1 = 32
+>ival2 = 234
+>
+>// 不加入cin.ignore(100,'\n')的结果
+>winston@Winstonly-Ly:/media/winston/本地磁盘/Job/TestProject/Debug$ ./strace
+>324 4234
+>ival1 = 324
+>ival2 = 4234
+>```
+>
+>
 
 ### 1.9 Lambda 表达式
 
@@ -408,7 +486,7 @@ void open(const char *filename, ios::openmode mode);
 
 **Lambda 表达式的定义形式如下**：
 
-```shell
+```cpp
 [外部变量访问方式说明符](参数表)->返回值类型
 {
 	语句块
@@ -437,14 +515,14 @@ int main()
 
 用`auto`关键字定义变量，编译器会自动判断变量的类型
 
-```shell
+```cpp
 auto i = 0; 	/* i 是 int */
 auto p = new A();		/* p 是 A* */
 ```
 
 `decltype`关键字可以用于求表达式的类型
 
-```shell
+```cpp
 int i;
 double t;
 struct A {double x};
@@ -462,7 +540,7 @@ decltype(a->x) x3;	/* x3 是 double */
 
 ### 2.1 头文件
 
-```shell
+```cpp
 #include <vector>
 #include <list>
 #include <depue>
@@ -482,15 +560,15 @@ decltype(a->x) x3;	/* x3 是 double */
 | C<T> c(n,t); | 用 n 个值为 t 的元素创建容器 c，其中值 t 必须是容器类型 C 的元素类型的值，或者是可转换为该类型的值。只适用于顺序容器 |
 | C<T> c(n);   | 创建有 n 个值初始化（第 3.3.1 节）（value-initialized）元素的容器 c。只适合顺序容器 |
 
-```shell
-`/* 将一个容器初始化为另一个容器的副本（容器类型和元素类型都必须相同） */
+```cpp
+/* 将一个容器初始化为另一个容器的副本（容器类型和元素类型都必须相同） */
 vector<int> iVec;
 vector<int> iVec2(iVec);
 
-`/* 初始化一段元素的副本(利用迭代器标记要复制的元素范围) */
+/* 初始化一段元素的副本(利用迭代器标记要复制的元素范围) */
 lsit <string> sList(sVec.begin(), sVec.end());
 
-`/* 分配和初始化指定数目的元素 */
+/* 分配和初始化指定数目的元素 */
 vector<int> iVec(10,5);
 vector<int> iVec1(10);
 ```
@@ -511,100 +589,106 @@ vector<int> iVec1(10);
 
 ### 2.4 基本操作
 
-```shell
-#增添元素
-`/* 在容器尾部插入一个elem数据 */`
+```cpp
+// 增添元素
+/* 在容器尾部插入一个elem数据 */
 c.push_back(elem);
 
-`/* 在容器开始处插入一个elem元素 */`
+/* 在容器开始处插入一个elem元素 */
 c.push_front(elem);
 
-`/* 在指定位置插入元素，返回指向新元素的迭代器 */`
+/* 在指定位置插入元素，返回指向新元素的迭代器 */
 c.insert(p, t);  // 在迭代器p所指向的元素前面插入值为t的新元素
 c.insert(p, n, t); // 迭代器p所指向的元素前面插入n个值为t的新元素
 c.insert(p,b,e); // 在迭代器 p 所指向的元素前面插入由迭代器 b 和 e 标记的范围内的元素
 
-#删除元素
-`/* 删除容器末尾的数据，返回void */`
+// 删除元素
+/* 删除容器末尾的数据，返回void */
 c.pop_back();
 
-`/* 删除容器c的第一个元素返回void,vector不支持*/`
+/* 删除容器c的第一个元素返回void,vector不支持*/
 c.pop_front();
 
-`/* 删除迭代器p所指向的元素，返回一个迭代器，它指向被删除元素后面的元素 */`
+/* 删除迭代器p所指向的元素，返回一个迭代器，它指向被删除元素后面的元素 */
 c.erase(p);
 
-`/* 删除容器c的所有元素，返回void */`
+/* 删除容器c的所有元素，返回void */
 c.clear();
 
-#迭代器（左闭右开）
-`/* 返回一个迭代器，指向容器c的第一个元素 */`
+// 迭代器（左闭右开）
+/* 返回一个迭代器，指向容器c的第一个元素 */
 c.begin();
 
-`/* 返回一个迭代器，指向容器c的最后一个元素的下一位置 */`
+/* 返回一个迭代器，指向容器c的最后一个元素的下一位置 */
 c.end();
 
-#容器大小
-`/* 返回容器c中的元素个数，返回类型为c::size_type */`
+// 容器大小
+/* 返回容器c中的元素个数，返回类型为c::size_type */
 c.size();
 
-`/* 返回容器 c 可容纳的最多元素个数，返回类型为c::size_type */`
+/* 返回容器 c 可容纳的最多元素个数，返回类型为c::size_type */
 c.max_size();
 
-`/* 返回标记容器大小是否为 0 的布尔值 */`
+/* 返回标记容器大小是否为 0 的布尔值 */
 c.empty();
 
-`/* 调整容器c的长度大小，使其能容纳n个元素，如果n<c.size()，则删除多出来的元素；否则，添加采用值初始化的新元素 */`
+/* 调整容器c的长度大小，使其能容纳n个元素，如果n<c.size()，则删除多出来的元素；否则，添加采用值初始化的新元素 */
 c.resize(n);
 
-#容器容量
-#size 指容器当前拥有的元素个数；而 capacity 则指容器在必须分配新存储空间之前可以存储的元素总数。
-#每当 vector 容器不得不分配新的存储空间时，以加倍当前容量的分配策略实现重新分配。
-`/* 返回容器容量大小，一般翻倍增长 */`
+// 容器容量
+// size 指容器当前拥有的元素个数；而 capacity 则指容器在必须分配新存储空间之前可以存储的元素总数。
+// 每当 vector 容器不得不分配新的存储空间时，以加倍当前容量的分配策略实现重新分配。
+/* 返回容器容量大小，一般翻倍增长 */
 c.capacity();
 
-`/*提前设置容量大小，预留额外的存储空间 */`
+/* 提前设置容量大小，预留额外的存储空间 */
 c.reserve(n)；
 
-#遍历元素
-`/* 使用迭代器访问元素 */`
+// 遍历元素
+/* 使用迭代器访问元素 */
 vector<int>::iterator it;
 for(it=vec.begin();it!=vec.end();it++)
     cout<<*it<<endl;
+    
+// 使用下标遍历元素
+for(int i = 0; i < vec.size(); ++i)
+{
+	cout << vec[i] << endl;
+}
 ```
 
 ### 2.5 访问成员函数
 
-```shell
-`/* 返回容器 c 的最后一个元素的引用。如果 c 为空，则该操作未定义 */`
+```cpp
+/* 返回容器 c 的最后一个元素的引用。如果 c 为空，则该操作未定义 */
 c.back();
 
-`/* 返回容器 c 的第一个元素的引用。如果 c 为空，则该操作未定义 */`
+/* 返回容器 c 的第一个元素的引用。如果 c 为空，则该操作未定义 */
 c.front();
 
-`/* 返回下标为n的元素引用，只适用于 vector 和 deque 容器 */`
+/* 返回下标为n的元素引用，只适用于 vector 和 deque 容器 */
 c[n]
 
-`/* 返回下标为n的元素的引用，只适用于vector和deque容器 */`
+/* 返回下标为n的元素的引用，只适用于vector和deque容器 */
 c.at(n)
-#利用下标操作的时候必须确认该下标处元素必须存在
+// 利用下标操作的时候必须确认该下标处元素必须存在
 ```
 
 ### 2.6 复制操作
 
-```shell
-`/* 删除容器 c1 的所有元素， 然后将 c2 的元素复制给 c1。 c1 和c2 的类型（包括容器类型和元素类型）必须相同 */`
+```cpp
+/* 删除容器 c1 的所有元素， 然后将 c2 的元素复制给 c1。 c1 和c2 的类型（包括容器类型和元素类型）必须相同 */
 c1 = c2
 
-`/*交换内容：调用完该函数后，c1 中存放的是 c2 原来的元素，c2 中存放的则是 c1 原来的元素。c1 和 c2 的类型必须相同 */`
+/*交换内容：调用完该函数后，c1 中存放的是 c2 原来的元素，c2 中存放的则是 c1 原来的元素。c1 和 c2 的类型必须相同 */
 c1.swap(c2)
 
-`/* 重新设置 c 的元素：将迭代器 b 和 e 标记的范围内所有的元素复制到 c 中。b 和 e 必须不是指向 c 中元素的迭代器 */`
+/* 重新设置 c 的元素：将迭代器 b 和 e 标记的范围内所有的元素复制到 c 中。b 和 e 必须不是指向 c 中元素的迭代器 */
 c.assign(b, e)
 
-`/* 将容器 c 重新设置为存储 n 个值为 t 的元素 */`
+/* 将容器 c 重新设置为存储 n 个值为 t 的元素 */
 c.assign(n, t)
-#带有一对迭代器参数的 assign 操作允许我们将一个容器的元素赋给另一个不同类型的容器。
+// 带有一对迭代器参数的 assign 操作允许我们将一个容器的元素赋给另一个不同类型的容器。
 
 ```
 
@@ -616,17 +700,17 @@ string 类型支持长度可变的字符串，C++ 标准库将负责管理与存
 
 ### 3.1 string对象的初始化
 
-```shell
-`默认构造函数s1为空串`
+```cpp
+// 默认构造函数s1为空串
 string s1；
-`将s2初始化为s1的一个副本`
+// 将s2初始化为s1的一个副本
 string s2(s1);
-`将s3初始化为一个字符串字面值副本`
+// 将s3初始化为一个字符串字面值副本
 string s3("value");
-`将s4初始化为字符'c'的n个副本`
+// 将s4初始化为字符'c'的n个副本
 string s4(n, 'c');
 
-# string 类没有接收一个整型参数或一个字符型参数的构造函数。
+// string 类没有接收一个整型参数或一个字符型参数的构造函数。
 ```
 
 ### 3.2 string对象的读写
@@ -637,8 +721,8 @@ string s4(n, 'c');
   string s;
   cin >> s;
   cout << s << endl;
-  # 读取并忽略开头所有的空白字符（如空格、换行符、制表符）
-  # 读取字符至再次遇到空白字符
+  // 读取并忽略开头所有的空白字符（如空格、换行符、制表符）
+  // 读取字符至再次遇到空白字符
   ```
 
 - 使用`getline`读取整行文本
@@ -649,40 +733,40 @@ string s4(n, 'c');
 
 ### 3.3 string对象的操作
 
-```shell
-`如果s为空串，返回true，否则返回false`
+```cpp
+// 如果s为空串，返回true，否则返回false
 s.empty()
-`返回s中字符的个数`
+// 返回s中字符的个数
 s.size()
-`返回s中位置为n的字符，位置从0开始计数`
+// 返回s中位置为n的字符，位置从0开始计数
 s[n]
-`把s1和s2连接成一个新字符串，返回生成的字符串，加法表示连接`
-`使用连接操作时，+ 操作符的左右操作数至少有一个是string类型的`
+// 把s1和s2连接成一个新字符串，返回生成的字符串，加法表示连接
+// 使用连接操作时，+ 操作符的左右操作数至少有一个是string类型的
 s1 + s2
-`把s1内容替换为s2的副本`
+// 把s1内容替换为s2的副本
 s1 = s2
-`比较v1和v2的内容，相等则返回true，否则返回false`
+// 比较v1和v2的内容，相等则返回true，否则返回false
 v1 == v2
-`保持惯有含义的操作符`
+// 保持惯有含义的操作符
 !=, <, <=, >, >=
-# 如果两个 string 对象长度不同， 且短的 string 对象与长的 string 对象的前面部分相匹配，则短的 string 对象小于长的 string 对象。
-# 如果 string 对象的字符不同，则比较第一个不匹配的字符。
+// 如果两个 string 对象长度不同， 且短的 string 对象与长的 string 对象的前面部分相匹配，则短的 string 对象小于长的 string 对象。
+// 如果 string 对象的字符不同，则比较第一个不匹配的字符。
 
-`可以用 char* 类型的变量、常量，以及 char 类型的变量、常量对 string 对象进行赋值`
+// 可以用 char* 类型的变量、常量，以及 char 类型的变量、常量对 string 对象进行赋值
 string s1；
 s1 = "hello";   // s1 = "hello"
 s2 = 'K';		// s2 = "K";
 
-`求 string 对象的子串`
-string substr(int n = 0, int m = string:npos)const;
+// 求 string 对象的子串
+string substr(int n = 0, int m = string:npos) const;
 # 从下标 n 开始，直到 m 个字符就是求得的子串
 
-`交换两个 string 对象的内容`
+// 交换两个 string 对象的内容
 swap 成员函数可以交换两个 string 对象的内容
 string s1("West”), s2("East");
 s1.swap(s2);  // s1 = "East"，s2 = "West"
 
-`去字符串的首地址，但这只是临时的地址，一旦string对象改变，地址也会变化`
+// 取字符串的首地址，但这只是临时的地址，一旦string对象改变，地址也会变化
 string str;
 char *p = str.c_str();
 ```
