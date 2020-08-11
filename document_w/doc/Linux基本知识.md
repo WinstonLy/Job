@@ -599,112 +599,6 @@ TCP/IP网络协议栈分为应用层、传输层、网络层、链路层四层�
 
 ## 八 socket编程
 
-### 8.1 预备知识
-
-- 网络数据流的地址规定：先发出的数据是低地址，后发出的数据是高地址，发送方将缓冲区的数据按内存地址从低到高发出，接收方按内存地址从低到高的顺序保存在缓冲区。
-
-- TCP/IP协议规定，网络数据流采用大端字节序，即低地址高字节。
-
-- socket API是一层抽象的网络编程接口，适用于各种底层网络协议，各种协议的地址格式并不相同：
-
-  | struct sockaddr | struct sockaddr_in              | struct sockaddr_un    |
-  | --------------- | ------------------------------- | --------------------- |
-  | 16位地址类型    | 16位地址类型：AF_INET           | 16位地址类型：AF_UNIX |
-  | 14字节地址数据  | 16位端口号+32位IP地址+8字节填充 | 108字节路径名         |
-
-  各种socket地址结构体的开头都是相同的，前16位表示整个结构体的长度，后16位表示地址类型。
-
-### 8.2 网络之间通信
-
-网络中进程之间通信首先要解决的问题是**如何唯一标识一个进程**，TCP/IP协议栈的解决办法是**网络层的ip地址可以唯一标识网络中的主机，而传输层的协议+端口可以唯一标识主机中的应用程序（进程）**，这样利用三元组（ip地址，协议，端口）就可以标识网络中的进程了。
-
-使用TCP/IP协议的应用程序是通过采用编程接口：socket（套接字）来实现网络进程之间的通信。
-
-### 8.3 socket的基本操作
-
-Linux的基本哲学之一就是一切皆是文件，都可以**打开open-->读写write/read-->关闭close**模式来操作。socket就提供了这些操作对应的接口函数。
-
-- socket()函数
-
-  socket函数对应于普通文件的打开操作，socket()返回一个socket描述符，唯一标识一个socket。
-
-  ```cpp
-  int socket(int domain, int type, int protocol);
-  # dimain：协议族，AN_INET,AF_INET6,AF_LOCAL
-  # type：	 指定socket类型，SOCK_STREAM,SOCK_DGRAM,SOCK_RAW,SOCK_PACKET
-  # protocol： 指定协议，IPPROTO_TCP,IPPTOTO_UDP,IPPROTO_SCTP，IPPROTO_TIPC 
-  ```
-
-- bind()函数
-
-  bind()函数将一个地址族中的特定地址赋给socket
-
-  ```shell
-  
-  ```
-  
-  服务器启动的时候会绑定一个众所周知的地址，客户端通过它来连接服务器，而客户端就不用指定，由系统自动分配一个端口号和自身的ip地址组合。
-  
->
-
-- listen()、connect()函数
-
-  作为一个服务器，在调用socket(),bind()之后就会调用listen()来监听这个socket，如果客户端这个时候调用connetc()发出连接请求，服务器就会收到这个请求。
-
-  ```cpp
-  int listen(int sockfd, int backlog);
-  # listen的第一个参数为socket描述字，第二个参数为socket可以排队的最大连接个数
-  # socket()创建的socket默认是一个主动类型，listen将socket变为被动类型，等待客户连接
-  int connect(int sockfd, const struct sockaddr *addr, socklen_t addrlen);
-  # connect函数的第一个参数为socket描述字，第二个参数为服务器的socket地址，第三个参数为socket地址的长度
-  ```
-
-- accept()函数
-
-  TCP服务器监听收到请求之后，调用accept()函数来接受请求。这样建立好连接之后就可以开始网络I/O操作。
-
-  ```cpp
-  int accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen);
-  # sockfd：socket描述字
-  # addr： 指向struct sockaddr×的指针，用于返回客户端的协议地址
-  # addrlen： 协议地址的长度
-  # 如果accept成功，返回值是内核自动生成的一个全新的描述字，代表与返回客户的TCP连接
-  ```
-
-- read()、write()函数
-
-  调用网络I/O进行读写操作，实现网络中不同进程之间的通信。read函数负责从fd中读取内容，成功返回读的字节数；write将缓冲区的内容写入fd，返回值大于0，表示写了部分或者全部的数据，返回的值小于0，出现错误。
-
-  ```cpp
-  read()/write()
-  recv()/send()
-  readv()/wrtiev()
-  `recvmsg()/sendmsg()
-  recvfrom()/sendto()
-  ```
-
-- 8.4 socket中TCP的三次握手连接和四次挥手详情
-
-**三次握手**
-
-![](/media/winston/本地磁盘/Job/document_w/image/TCP三次握手.png)
-
-- 首先客户端调用connect，发送连接请求，向服务器发送SYN J包，然后connect进入阻塞状态；
-- 服务器监听到连接请求，收到SYN J包，调用accept函数接受请求并向客户端发送SYN K，ACK J+1，然后accept进入阻塞状态；
-- 客户端收到SYN K，ACK J+1之后，这是connect返回，并对SYN K进行确认，发送ACK K+1；
-- 服务器收到ACK K+1后，accept返回，此时三次握手完成连接建立
-
-**四次挥手**
-
-![](/media/winston/本地磁盘/Job/document_w/image/TCP四次挥手.png)
-
-- 某个应用进程首先调用close主动关闭连接，这时TCP发送一个FIN M；
-- 另一端接收到FIN M之后，执行被动关闭，对这个FIN进行确认。它的接收也作为文件结束符传递给应用进程，因为FIN的接收意味着应用进程在相应的连接上再也接收不到额外数据；
-- 一段时间之后，接收到文件结束符的应用进程调用close关闭它的socket。这导致它的TCP也发送一个FIN N；
-- 接收到这个FIN的源发送端TCP对它进行确认。
-
-## Socket编程
-
 ### Linux中的socket介绍
 
 在计算机通信领域，socket被翻译成**套接字**，通过socket这种约定，计算机之间棵通信同时计算机内部也可通信，是一种网络进程间通信。
@@ -724,7 +618,7 @@ socket的典型应用是Web服务器和浏览器
 
 **OSI模型（开放式系统互联）**：将网络通信的工作分为7层，**从上到下**依次是：物理层、数据链路层、网络层、传输层、会话层、表示层和应用层；精简之后的模型如下：**从下到上依次是接口层、网络层、传输层和应用层**
 
-![网络模型](/media/winston/本地磁盘/Job/document_w/image/网络模型.png)
+![网络模型](../image/网络模型.png)
 
 网络模型的每一层都是在进行数据封装。
 
@@ -734,7 +628,7 @@ socket的典型应用是Web服务器和浏览器
 
 socket编程是基于TCP和UDP协议的，层级关系如下：
 
-![scoket层级关系](/media/winston/本地磁盘/Job/document_w/image/socket层级关系.png)
+![scoket层级关系](../image/socket层级关系.png)
 
 **网络中确认身份信息的三要素**：IP地址，MAC地址和端口号
 
@@ -763,7 +657,7 @@ socket编程是基于TCP和UDP协议的，层级关系如下：
   >
   >- 4个字节的32bit值以下面的次序传输：
   >
-  > 首先是0~7bit、其次是8~15bit、然后16~23bit、最后是24~31bit，这种传输次序称为大端字节序
+  > 首先是0-7bit、其次是8-15bit、然后16-23bit、最后是24-31bit，这种传输次序称为大端字节序
   >
   >**网络协议会指定字节序，如TCP/IP 协议采用大端字节序，而地址表示是网络字节序；所以将一个地址绑定到socket的时候，应现将主机字节序转换为网络字节序**
   >
@@ -814,7 +708,7 @@ socket编程是基于TCP和UDP协议的，层级关系如下：
   }
   ```
 
-  有时需要答应能被人理解的地址格式：提供下面两个函数在二进制地址格式和点分十进制字符串表示(a.b.c.d)之间转换：
+  有时需要打印能被人理解的地址格式：提供下面两个函数在二进制地址格式和点分十进制字符串表示(a.b.c.d)之间转换：
 
   ```cpp
   #include <arpa/inet.h>
@@ -842,7 +736,7 @@ socket编程是基于TCP和UDP协议的，层级关系如下：
   int socket(int domain, int type, int protocol);
   
   // TCP 套接字
-  int tcp_socket = socket(AF_INET, SOCK_STREAM, 0/IPPROTO_UDP)
+  int tcp_socket = socket(AF_INET, SOCK_STREAM, 0/IPPROTO_TCP)
   ```
 
   - 参数介绍
@@ -997,7 +891,7 @@ ssize_t send(int sockfd， const void *buf, size_t nbytes, int flags);
 # send成功不代表另一端进程接收数据，仅表示数据已经无错发送到网络；对于字节流协议send会阻塞直到整个数据被传输
 ```
 
->![套接字调用标志](/media/winston/本地磁盘/Job/document_w/image/套接字调用标志.png)
+>![套接字调用标志](../image/套接字调用标志.png)
 
 **sendto**:
 
@@ -1139,7 +1033,7 @@ int main(){
 
   `read()/recv() `函数也是如此，也从输入缓冲区中读取数据，而不是直接从网络中读取。下面是TCP/IP套接字的I/O缓冲区示意图：
 
-  ![TCP套接字IO缓冲区示意图](/media/winston/本地磁盘/Job/document_w/image/TCP套接字IO缓冲区示意图.png)
+  ![TCP套接字IO缓冲区示意图](../image/TCP套接字IO缓冲区示意图.png)
 
   >这些缓冲区特性如下：
   >
@@ -1174,7 +1068,7 @@ TCP建立连接时需要传输三个数据包，俗称**三次握手**
 
 #### TCP 数据报结构
 
-![TCP数据报结构](/media/winston/本地磁盘/Job/document_w/image/TCP数据报结构.png)
+![TCP数据报结构](../image/TCP数据报结构.png)
 
 >**序号**：Seq，序号占32位，用来标识从计算机A发送到计算机B的数据包的序号，计算机发送数据时对此进行标记
 >
@@ -1193,16 +1087,14 @@ TCP建立连接时需要传输三个数据包，俗称**三次握手**
 
 使用`connect`建立连接时，客户端和服务器端会相互发送三个数据包：
 
-![](/media/winston/本地磁盘/Job/document_w/image/TCP三次握手图.png)
-
-![](D:\Job\document_w\image\TCP三次握手图.png)
+![](../image/TCP三次握手图.png)
 
 >客户端调用`socket`创建套接字之后，因为没有建立连接，所以套接字处于CLOSED状态；服务器调用`listen`函数后，服务器端的套接字进入被动LISTEN状态，开始监听客户端请求。
 >
->这时科幻段发起请求：
+>这时客户端发起请求：
 >
 >1. 客户端调用`connect`函数后，TCP会组建一个数据包，并设置SYN标志位，表示该数据包是用来建立同步连接的，同时生成随机数1000，填充进序号字段，之后向服务器端发送数据包，客户端进入SYN-SEND状态
->2. 服务器端收到数据包，检测到已经设置了SYN标志位，就知道这是客户端发来的建立连接的请求包。服务器端也会组建一个数据包，并设置SYN和ACK标志位，SYN表示该数据包用来建立连接，ACK用来确认书到了刚才客户端发送的数据包
+>2. 服务器端收到数据包，检测到已经设置了SYN标志位，就知道这是客户端发来的建立连接的请求包。服务器端也会组建一个数据包，并设置SYN和ACK标志位，SYN表示该数据包用来建立连接，ACK用来确认收到了刚才客户端发送的数据包
 >   - 服务器生成一个随机数2000，填充序号字段，2000和客户端数据包没有关系
 >   - 服务器将客户端数据包序号1000加1得到1001，并用这个数字填充确认号(Ack)字段
 >   - 服务器将数据包发送出去之后，进入SYN-RECV状态
@@ -1216,9 +1108,7 @@ TCP建立连接时需要传输三个数据包，俗称**三次握手**
 
 连接建立后的数据传输如下图：
 
-![TCP套接字的数据传输过程](/media/winston/本地磁盘/Job/document_w/image/TCP套接字的数据交换过程.png)
-
-![TCP套接字的数据传输过程](D:\Job\document_w\image\TCP四次挥手断开连接.png)
+![TCP套接字的数据传输过程](../image/TCP套接字的数据交换过程.png)
 
 主机 A 每次会发送指定字节数的数据，同时将数据包的Seq初始设置，如上图设置为 1200；主机 B 为了确认这一点，向主机 A 发送ACK包，并将确认号(Ack)字段设置为 1301.
 
@@ -1227,7 +1117,7 @@ TCP建立连接时需要传输三个数据包，俗称**三次握手**
 
 下图是传输发生错误的处理过程：
 
-![](/media/winston/本地磁盘/Job/document_w/image/TCP套接字传输发生错误.png)
+![](../image/TCP套接字传输发生错误.png)
 
 为完成发生错误时(主机B没收到数据包，主机A没收到ACK包)完成数据包的重传，TCP套接字每次发送数据包时都会启动定时器，如果在一定时间内没有收到目标机器传回的ACK包，那么定时器超时，数据包就会重传。
 
@@ -1241,7 +1131,7 @@ TCP建立连接时需要传输三个数据包，俗称**三次握手**
 
 断开连接让计算机释放不再使用的资源，如果连接不能正常断开，不仅会造成数据传输错误，还会导致套接字不能关闭，持续占用资源。
 
-![TCP四次挥手断开连接](/media/winston/本地磁盘/Job/document_w/image/TCP四次挥手断开连接.png)
+![TCP四次挥手断开连接](../image/TCP四次挥手断开连接.png)
 
 >建立连接后，客户端和服务器都处于`ESTABLISED`状态。这时，客户端发起断开连接的请求：
 >
